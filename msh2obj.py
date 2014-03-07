@@ -53,7 +53,8 @@ for vertex in v:
     output.write("v %f 0.0 %f\n" % tuple(vertex)) # flip y and z
 
 for face in f:
-    output.write("f %d %d %d\n" % tuple(face))
+    a, b, c = face
+    output.write("f %d %d %d\n" % (a, c, b)) # flip node order
 
 output.close()
 
