@@ -4,6 +4,9 @@ import numpy as np
 import netCDF4 as NC
 import pylab as plt
 
+def make_list(string):
+    return map(lambda x: float(x), string.split(","))
+
 from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.description = ""
@@ -11,6 +14,8 @@ parser.add_argument("FILE", nargs=1)
 parser.add_argument("-o", dest="output", default="dem.geo")
 parser.add_argument("-m", dest="min_size", type=float, default=1.0)
 parser.add_argument("-M", dest="max_size", type=float, default=10.0)
+parser.add_argument("-u", dest="usurf_levels", type=make_list, default=[0.0])
+parser.add_argument("-t", dest="thk_levels", type=make_list, default=[0.0])
 options = parser.parse_args()
 
 nc = NC.Dataset(options.FILE[0])
@@ -48,9 +53,9 @@ Line Loop(5) = {1,2,3,4}; Plane Surface(6) = {5};
 point_counter = 10
 node_list = []
 
-def print_zero_contour(output_file, x, y, variable):
+def print_contours(output_file, x, y, variable, levels):
     global point_counter, node_list
-    for c in plt.contour(x, y, variable, levels=[0]).collections:
+    for c in plt.contour(x, y, variable, levels=levels).collections:
         for p in c.get_paths():
             for v in p.vertices:
                 x,y = v
@@ -58,8 +63,8 @@ def print_zero_contour(output_file, x, y, variable):
                 node_list.append(point_counter)
                 point_counter += 1
 
-print_zero_contour(output, x, y, usurf)
-print_zero_contour(output, x, y, thk)
+print_contours(output, x, y, usurf, options.usurf_levels)
+print_contours(output, x, y, thk, options.thk_levels)
 
 # define the attractor field
 output.write("""
