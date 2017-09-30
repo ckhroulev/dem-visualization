@@ -48,13 +48,33 @@ input.close()
 
 output = open(options.output, mode="w")
 
+# vertices
 for vertex in v:
-    vertex[1] *= -1                               # flip the y sign
-    output.write("v %f 0.0 %f\n" % tuple(vertex)) # flip y and z
+    x, y = vertex
+    y *= -1.0
+    z = 0.0
+
+    output.write("v %f %f %f\n" % (x, z, y)) # flip y and z
+
+# texture (U, V) vertices
+V = np.array(v)
+
+x_min = np.min(V[:,0])
+y_min = np.min(V[:,1])
+x_max = np.max(V[:,0])
+y_max = np.max(V[:,1])
+
+for vertex in v:
+    x, y = vertex
+
+    x = (x - x_min) / (x_max - x_min)
+    y = (y - y_min) / (y_max - y_min)
+
+    output.write("vt %f %f\n" % (x, y))
 
 for face in f:
     a, b, c = face
-    output.write("f %d %d %d\n" % (a, c, b)) # flip node order
+    output.write("f %d/%d %d/%d %d/%d\n" % (a, a, c, c, b, b)) # flip node order
 
 output.close()
 
