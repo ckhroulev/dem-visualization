@@ -17,7 +17,7 @@ parser.add_argument("-c", dest="colormap", help="matplotlib colormap name", defa
 parser.add_argument("--clip_max", dest="clip_max", default=None, type=float)
 parser.add_argument("--clip_min", dest="clip_min", default=None, type=float)
 parser.add_argument("-v", dest="variable", default="usurf")
-parser.add_argument("-m", dest="mask", default=None, type=int, help="set the mask value to use for computing the ice cover mask")
+parser.add_argument("-m", dest="mask", default=None, type=int, help="M in mask := (data > M)")
 options = parser.parse_args()
 
 nc = NC.Dataset(options.FILE[0])
@@ -35,7 +35,7 @@ if options.clip_min is not None:
     data = np.maximum(data, options.clip_min)
 
 if options.mask:
-    data = np.array(data == options.mask, dtype=np.float32)
+    data = np.array(data > options.mask, dtype=np.float32)
 
 def normalize(data):
     data_min = data.min()
