@@ -25,7 +25,7 @@ nc = NC.Dataset(options.FILE[0])
 data = np.ma.array(nc.variables[options.variable][:], dtype=np.float32).filled(0)
 data = np.squeeze(data)
 
-if options.flip:
+if not options.flip:
     data = np.flipud(data)
 
 if options.clip_max is not None:
