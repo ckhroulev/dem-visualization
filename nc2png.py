@@ -4,6 +4,7 @@ from PIL import Image
 import numpy as np
 import netCDF4 as NC
 import pylab as plt
+from scipy.ndimage import zoom
 
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -35,6 +36,7 @@ if options.clip_min is not None:
     data = np.maximum(data, options.clip_min)
 
 if options.mask:
+    data = zoom(data, 8)
     data = np.array(data > options.mask, dtype=np.float32)
 
 def normalize(data):
